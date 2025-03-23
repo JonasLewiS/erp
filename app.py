@@ -3,13 +3,11 @@ import pandas as pd
 import sqlite3
 import matplotlib.pyplot as plt
 
-# Função para mostrar gráfico de barras de fornecedores
 def grafico_fornecedores():
     conn = sqlite3.connect("erp_finance.db", detect_types=sqlite3.PARSE_DECLTYPES)
     df = pd.read_sql_query("SELECT fornecedor, SUM(valor) as total FROM contas_pagar GROUP BY fornecedor", conn)
     conn.close()
 
-    # Gerando o gráfico
     fig, ax = plt.subplots()
     ax.bar(df['fornecedor'], df['total'])
     ax.set_title("Distribuição das Contas a Pagar por Fornecedor")
@@ -19,7 +17,6 @@ def grafico_fornecedores():
     
     st.pyplot(fig)
 
-# Função para mostrar os Top 5 Clientes com Maior Receita
 def top_5_clientes():
     conn = sqlite3.connect("erp_finance.db", detect_types=sqlite3.PARSE_DECLTYPES)
     query = """
@@ -33,10 +30,8 @@ def top_5_clientes():
     df = pd.read_sql_query(query, conn)
     conn.close()
 
-    # Exibindo a tabela
     st.dataframe(df)
 
-    # Gerando gráfico de barras
     fig, ax = plt.subplots()
     ax.bar(df['nome'], df['total_receita'])
     ax.set_title("Top 5 Clientes com Maior Receita")
@@ -46,7 +41,6 @@ def top_5_clientes():
     
     st.pyplot(fig)
 
-# Função para Comparação Receita vs Despesa
 def comparacao_receita_despesa():
     conn = sqlite3.connect("erp_finance.db", detect_types=sqlite3.PARSE_DECLTYPES)
     query_receita = "SELECT SUM(valor) as total_receita FROM lancamentos WHERE tipo = 'Receita' AND strftime('%Y-%m', data) = strftime('%Y-%m', 'now')"
@@ -56,11 +50,9 @@ def comparacao_receita_despesa():
     despesa = pd.read_sql_query(query_despesa, conn)['total_despesa'][0]
     conn.close()
 
-    # Preparando os dados para o gráfico
     categorias = ['Receita', 'Despesa']
     valores = [receita if receita else 0, despesa if despesa else 0]
 
-    # Gerando gráfico de barras
     fig, ax = plt.subplots()
     ax.bar(categorias, valores, color=['green', 'red'])
     ax.set_title("Comparação Receita vs Despesa")
@@ -69,7 +61,6 @@ def comparacao_receita_despesa():
     
     st.pyplot(fig)
 
-# Interface Streamlit
 def main():
     st.title("ERP Financeiro com Streamlit")
     
